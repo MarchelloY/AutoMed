@@ -1,9 +1,12 @@
 package com.marchello.model;
 
-import java.io.Serializable;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
-public class Person implements Serializable {
-
+public class Person{
+    private String id;
     private String surname;
     private String name;
     private String patronymic;
@@ -15,7 +18,17 @@ public class Person implements Serializable {
     private String whenIssuedPassport;
     private String whoIssuedPassport;
 
-    public Person(String surname, String name, String patronymic, String phone, String address, String seriesPassport, String numberPassport, String idNumberPassport, String whenIssuedPassport, String whoIssuedPassport) {
+    public Person(String surname,
+                  String name,
+                  String patronymic,
+                  String phone,
+                  String address,
+                  String seriesPassport,
+                  String numberPassport,
+                  String idNumberPassport,
+                  String whenIssuedPassport,
+                  String whoIssuedPassport) throws IOException {
+        this.id = getUniqueId();
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
@@ -29,6 +42,15 @@ public class Person implements Serializable {
     }
 
     public Person() {}
+
+    //GETTERS AND SETTERS
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getSurname() {
         return surname;
@@ -110,11 +132,13 @@ public class Person implements Serializable {
         this.whoIssuedPassport = whoIssuedPassport;
     }
 
-    @Override
-    public String toString() {
-        return "Person {name = " + name + ", surname = " + surname + ", patronymic = " + patronymic +
-                ", phone = " + phone + ", address = " + address + ", seriesPassport = " + seriesPassport +
-                ", numberPassport = " + numberPassport + ", idNumberPassport = " + idNumberPassport +
-                ", whenIssuedPassport = " + whenIssuedPassport + ", whoIssuedPassport = " + whoIssuedPassport + "}";
+    private String getUniqueId() throws IOException {
+        File file = new File("id.txt");
+        Scanner scanner = new Scanner(file);
+        int counter = file.length() == 0 ? 0 : Integer.parseInt(scanner.nextLine());
+        FileWriter fw = new FileWriter(file);
+        fw.write(String.valueOf(++counter));
+        fw.close();
+        return String.valueOf(counter);
     }
 }

@@ -8,13 +8,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class GUI extends Application {
-
     private double xOffset;
     private double yOffset;
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("addClient.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("view/addClient.fxml"));
         Scene scene = new Scene(root);
         scene.setOnMousePressed(event -> {
             xOffset = stage.getX() - event.getScreenX();

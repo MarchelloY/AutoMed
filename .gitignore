@@ -2,3 +2,5 @@
 out
 *.iml
 *.iws
+id.txt
+persons.json
