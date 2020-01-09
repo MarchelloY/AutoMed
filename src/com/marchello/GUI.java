@@ -13,7 +13,7 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("view/addClient.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("view/searchClient.fxml"));
         Scene scene = new Scene(root);
         scene.setOnMousePressed(event -> {
             xOffset = stage.getX() - event.getScreenX();
