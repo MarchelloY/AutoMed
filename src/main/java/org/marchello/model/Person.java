@@ -1,9 +1,7 @@
-package com.marchello.model;
+package org.marchello.model;
 
-import java.io.File;
-import java.io.FileWriter;
+import org.marchello.service.PersonService;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Person{
     private String id;
@@ -28,7 +26,7 @@ public class Person{
                   String idNumberPassport,
                   String whenIssuedPassport,
                   String whoIssuedPassport) throws IOException {
-        this.id = getUniqueId();
+        this.id = PersonService.readIdFromFile();
         this.surname = surname;
         this.name = name;
         this.patronymic = patronymic;
@@ -130,15 +128,5 @@ public class Person{
 
     public void setWhoIssuedPassport(String whoIssuedPassport) {
         this.whoIssuedPassport = whoIssuedPassport;
-    }
-
-    private String getUniqueId() throws IOException {
-        File file = new File("id.txt");
-        Scanner scanner = new Scanner(file);
-        int counter = file.length() == 0 ? 0 : Integer.parseInt(scanner.nextLine());
-        FileWriter fw = new FileWriter(file);
-        fw.write(String.valueOf(++counter));
-        fw.close();
-        return String.valueOf(counter);
     }
 }
