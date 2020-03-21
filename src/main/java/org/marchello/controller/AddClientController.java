@@ -2,6 +2,7 @@ package org.marchello.controller;
 
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import org.codehaus.plexus.util.StringUtils;
 import org.marchello.model.Person;
 import org.marchello.service.PersonService;
 import javafx.fxml.FXML;
@@ -49,15 +50,15 @@ public class AddClientController {
     public void clickButtonAdd() throws IOException {
         String error = formErrorMessage();
         this.errorMessage.setText(error);
-        if(error.equals("")){
+        if (error.equals("")) {
             Person person = new Person(this.surname.getText(),
                     this.name.getText(),
                     this.patronymic.getText(),
                     this.phone.getText(),
                     this.address.getText(),
-                    this.seriesPassport.getText(),
+                    this.seriesPassport.getText().toUpperCase(),
                     this.numberPassport.getText(),
-                    this.idNumberPassport.getText(),
+                    this.idNumberPassport.getText().toUpperCase(),
                     this.whenIssuedPassport.getValue().format(DateTimeFormatter.ofPattern("dd-MM-yyyy")),
                     this.whoIssuedPassport.getText());
             PersonService.addPerson(person);
@@ -68,14 +69,36 @@ public class AddClientController {
 
     private String formErrorMessage() {
         String message = "";
-        if(this.surname.getText().equals("")) message += "Не указана фамилия!\n";
-        if(this.name.getText().equals("")) message += "Не указано имя!\n";
-        if(this.patronymic.getText().equals("")) message += "Не указано отчество!\n";
-        if(this.seriesPassport.getText().length() != 2) message += "Серия паспорта должна содержать\n2 буквы!\n";
-        if(this.numberPassport.getText().length() != 7) message += "Номер паспорта должен содержать\n7 цифр!\n";
-        if(this.idNumberPassport.getText().length() != 14) message += "Идент. номер должен содержать\n14 символов!\n";
-        if(this.whenIssuedPassport.getValue() == null) message += "Поле 'Дата выдачи' не заполнено!\n";
-        if(this.whoIssuedPassport.getText().equals("")) message += "Поле 'Кем выдан' не заполнено!";
+        if (this.surname.getText().equals(""))
+            message += "Не указана фамилия!\n";
+        else if (!StringUtils.isAlpha(this.surname.getText()))
+            message += "В полe 'Фамилия' можно\nвводить только буквы!\n";
+        if (this.name.getText().equals(""))
+            message += "Не указано имя!\n";
+        else if (!StringUtils.isAlpha(this.name.getText()))
+            message += "В полe 'Имя' можно\nвводить только буквы!\n";
+        if (this.patronymic.getText().equals(""))
+            message += "Не указано отчество!\n";
+        else if (!StringUtils.isAlpha(this.patronymic.getText()))
+            message += "В полe 'Отчество' можно\nвводить только буквы!\n";
+        if (this.seriesPassport.getText().length() != 2)
+            message += "Серия паспорта должна содержать\n2 буквы!\n";
+        else if (!StringUtils.isAlpha(this.seriesPassport.getText()))
+            message += "В полe 'Серия' можно\nвводить только буквы!\n";
+        if (this.numberPassport.getText().length() != 7)
+            message += "Номер паспорта должен содержать\n7 цифр!\n";
+        else if (!StringUtils.isNumeric(this.numberPassport.getText()))
+            message += "В полe 'Номер' можно\nвводить только цифры!\n";
+        if (this.idNumberPassport.getText().length() != 14)
+            message += "Идент. номер должен содержать\n14 символов!\n";
+        else if (!StringUtils.isAlphanumeric(this.idNumberPassport.getText()))
+            message += "В полe 'Идент. номер' можно\nвводить только буквы и цифры!\n";
+        if (this.whenIssuedPassport.getValue() == null)
+            message += "Поле 'Дата выдачи' не заполнено!\n";
+        if (this.whoIssuedPassport.getText().equals(""))
+            message += "Поле 'Кем выдан' не заполнено!";
+        else if (!StringUtils.isAlphaSpace(this.whoIssuedPassport.getText()))
+            message += "В полe 'Кем выдан' можно\nвводить только буквы!\n";
         return message;
     }
 }

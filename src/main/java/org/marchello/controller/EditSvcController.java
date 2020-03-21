@@ -1,6 +1,5 @@
 package org.marchello.controller;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,6 +25,7 @@ public class EditSvcController {
     public TextField costk;
     public Button updateButton;
     public Button deleteButton;
+
     private Svc selectedService;
 
     @FXML
@@ -35,10 +35,10 @@ public class EditSvcController {
 
     @FXML
     public void clickButtonSearch() throws FileNotFoundException {
-        List<Svc> searchServices = SvcService.searchServicesByFIO(searchInput.getText());
+        List<Svc> searchServices = SvcService.searchServicesByName(this.searchInput.getText());
         clearForm();
-        if(searchServices.isEmpty())
-            errorMessage.setText("Поиск по запросу \"" + searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
+        if (searchServices.isEmpty())
+            this.errorMessage.setText("Поиск по запросу \"" + this.searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
         disableForm(true);
         showServiceList(searchServices);
     }
@@ -64,7 +64,7 @@ public class EditSvcController {
         if (error.equals("") && this.selectedService != null) {
             Svc newService = this.selectedService;
             newService.setName(this.name.getText());
-            newService.setCost(this.costr.getText() + "." + this.costk.getText());
+            newService.setCost(this.costr.getText() + "," + this.costk.getText());
             SvcService.updateService(newService);
             clickButtonSearch();
         }
@@ -72,10 +72,24 @@ public class EditSvcController {
 
     private void showServiceList(List<Svc> svcs) {
         ObservableList<String> data = FXCollections.observableArrayList();
-        for(Svc svc : svcs)
+        for (Svc svc : svcs)
             data.add("(" + svc.getId() + ") " + svc.getName());
         this.serviceList.setItems(data);
-        this.serviceList.getSelectionModel().selectedItemProperty().addListener(this::clickItemService);
+        this.serviceList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.selectedService = null;
+            if (newValue != null)
+                try {
+                    this.selectedService = SvcService.getServiceById(newValue.substring(1, newValue.indexOf(")")));
+                    disableForm(false);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            if (this.selectedService != null) {
+                this.name.setText(this.selectedService.getName());
+                this.costr.setText(this.selectedService.getCost().substring(0, (this.selectedService.getCost().indexOf(","))));
+                this.costk.setText(this.selectedService.getCost().substring(this.selectedService.getCost().indexOf(",") + 1));
+            }
+        });
     }
 
     private void clearForm(){
@@ -83,22 +97,6 @@ public class EditSvcController {
         this.costr.setText("");
         this.costk.setText("");
         this.errorMessage.setText("");
-    }
-
-    private void clickItemService(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        this.selectedService = null;
-        if (newValue != null)
-            try {
-                this.selectedService = SvcService.getServiceById(newValue.substring(1, newValue.lastIndexOf(")")));
-                disableForm(false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        if (this.selectedService != null) {
-            this.name.setText(this.selectedService.getName());
-            this.costr.setText(this.selectedService.getCost().substring(0, (this.selectedService.getCost().indexOf("."))));
-            this.costk.setText(this.selectedService.getCost().substring(this.selectedService.getCost().indexOf(".") + 1));
-        }
     }
 
     private void disableForm(boolean flag) {
@@ -111,11 +109,11 @@ public class EditSvcController {
 
     private String formErrorMessage() {
         String message = "";
-        if(this.name.getText().equals("")) message += "Не указано название!\n";
-        if(this.costk.getText().equals("") && this.costr.getText().equals(""))
+        if (this.name.getText().equals("")) message += "Не указано название!\n";
+        if (this.costk.getText().equals("") && this.costr.getText().equals(""))
             message += "Не указана стоимость!\n";
-        else if(!StringUtils.isNumeric(this.costr.getText()) || !StringUtils.isNumeric(this.costk.getText()))
-            message += "В поля \"стоимость\" можно\nвводить только числа!\n";
+        else if (!StringUtils.isNumeric(this.costr.getText()) || !StringUtils.isNumeric(this.costk.getText()))
+            message += "В поля 'Рубли' и 'Копейки'\nможно вводить только числа!\n";
         return message;
     }
 }

@@ -11,6 +11,7 @@ public class MenuController {
     private static final Stage STAGE_EDIT_CLIENT = new Stage();
     private static final Stage STAGE_ADD_SERVICE = new Stage();
     private static final Stage STAGE_EDIT_SERVICE = new Stage();
+    private static final Stage STAGE_PRINT = new Stage();
 
     @FXML
     public void clickButtonExit() {
@@ -35,5 +36,9 @@ public class MenuController {
     @FXML
     public void clickButtonEditService() throws IOException {
         Main.openWindow(STAGE_EDIT_SERVICE, "/view/editSvc.fxml");
+    }
+
+    public void clickButtonPrint() throws IOException {
+        Main.openWindow(STAGE_PRINT, "/view/print.fxml");
     }
 }

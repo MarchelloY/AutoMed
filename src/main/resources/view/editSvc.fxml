@@ -14,7 +14,7 @@
         <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
-        <TextField fx:id="searchInput" prefHeight="25.0" prefWidth="125.0" promptText="Введите имя или фамилию" />
+        <TextField fx:id="searchInput" prefHeight="25.0" prefWidth="125.0" promptText="Введите название услуги" />
         <Button mnemonicParsing="false" onAction="#clickButtonSearch" prefHeight="25.0" prefWidth="100.0" style="-fx-background-color: #428bca;" text="Найти" textFill="#f7f7f7" GridPane.columnIndex="1"><font><Font name="System Bold" size="12.0" /></font></Button>
     </GridPane>
     <Label alignment="CENTER" prefHeight="40.0" prefWidth="350.0" style="-fx-background-color: #292b2c;" text="РЕДАКТИРОВАНИЕ" textFill="#f7f7f7"><font><Font name="System Bold" size="17.0" /></font></Label>

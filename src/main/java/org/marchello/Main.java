@@ -6,9 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.marchello.model.Person;
-import org.marchello.service.DocService;
-import org.marchello.service.PersonService;
 
 import java.io.IOException;
 
@@ -32,7 +29,7 @@ public class Main extends Application {
         stage.setResizable(false);
         stage.sizeToScene();
         stage.centerOnScreen();
-        if(stage.getStyle() != StageStyle.UNDECORATED)
+        if (stage.getStyle() != StageStyle.UNDECORATED)
             stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
@@ -42,8 +39,6 @@ public class Main extends Application {
     }
 
     public void start(Stage stage) throws Exception {
-        //Person person = PersonService.getPersonById("1");
-        //DocService.createDoc(person, false);
         openWindow(stage, "/view/menu.fxml");
     }
 }

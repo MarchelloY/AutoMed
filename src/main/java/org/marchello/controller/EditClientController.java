@@ -1,8 +1,8 @@
 package org.marchello.controller;
 
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import org.codehaus.plexus.util.StringUtils;
 import org.marchello.model.Person;
 import org.marchello.service.PersonService;
 import javafx.collections.FXCollections;
@@ -29,6 +29,7 @@ public class EditClientController {
     public TextField whoIssuedPassport;
     public Button updateButton;
     public Button deleteButton;
+
     private Person selectedPerson;
 
     @FXML
@@ -38,10 +39,10 @@ public class EditClientController {
 
     @FXML
     public void clickButtonSearch() throws FileNotFoundException {
-        List<Person> searchPersons = PersonService.searchPersonsByFIO(searchInput.getText());
+        List<Person> searchPersons = PersonService.searchPersonsByFIO(this.searchInput.getText());
         clearForm();
-        if(searchPersons.isEmpty())
-            errorMessage.setText("Поиск по запросу \"" + searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
+        if (searchPersons.isEmpty())
+            this.errorMessage.setText("Поиск по запросу \"" + searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
         disableForm(true);
         showPersonList(searchPersons);
     }
@@ -54,7 +55,7 @@ public class EditClientController {
 
     @FXML
     public void clickButtonDelete() throws IOException {
-        if(this.selectedPerson != null) {
+        if (this.selectedPerson != null) {
             PersonService.deletePersonById(this.selectedPerson.getId());
             clickButtonSearch();
         }
@@ -83,10 +84,31 @@ public class EditClientController {
 
     private void showPersonList(List<Person> persons) {
         ObservableList<String> data = FXCollections.observableArrayList();
-        for(Person person : persons)
+        for (Person person : persons)
             data.add("(" + person.getId() + ") " + person.getSurname() + " " + person.getName() + " " + person.getPatronymic());
         this.personList.setItems(data);
-        this.personList.getSelectionModel().selectedItemProperty().addListener(this::clickItemPerson);
+        this.personList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            this.selectedPerson = null;
+            if (newValue != null)
+                try {
+                    this.selectedPerson = PersonService.getPersonById(newValue.substring(1, newValue.indexOf(")")));
+                    disableForm(false);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            if (this.selectedPerson != null) {
+                this.surname.setText(this.selectedPerson.getSurname());
+                this.name.setText(this.selectedPerson.getName());
+                this.patronymic.setText(this.selectedPerson.getPatronymic());
+                this.phone.setText(this.selectedPerson.getPhone());
+                this.address.setText(this.selectedPerson.getAddress());
+                this.seriesPassport.setText(this.selectedPerson.getSeriesPassport());
+                this.numberPassport.setText(this.selectedPerson.getNumberPassport());
+                this.idNumberPassport.setText(this.selectedPerson.getIdNumberPassport());
+                this.whenIssuedPassport.setText(this.selectedPerson.getWhenIssuedPassport());
+                this.whoIssuedPassport.setText(this.selectedPerson.getWhoIssuedPassport());
+            }
+        });
     }
 
     private void clearForm(){
@@ -101,29 +123,6 @@ public class EditClientController {
         this.whenIssuedPassport.setText("");
         this.whoIssuedPassport.setText("");
         this.errorMessage.setText("");
-    }
-
-    private void clickItemPerson(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-        this.selectedPerson = null;
-        if (newValue != null)
-            try {
-                this.selectedPerson = PersonService.getPersonById(newValue.substring(1, newValue.lastIndexOf(")")));
-                disableForm(false);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        if (this.selectedPerson != null) {
-            this.surname.setText(this.selectedPerson.getSurname());
-            this.name.setText(this.selectedPerson.getName());
-            this.patronymic.setText(this.selectedPerson.getPatronymic());
-            this.phone.setText(this.selectedPerson.getPhone());
-            this.address.setText(this.selectedPerson.getAddress());
-            this.seriesPassport.setText(this.selectedPerson.getSeriesPassport());
-            this.numberPassport.setText(this.selectedPerson.getNumberPassport());
-            this.idNumberPassport.setText(this.selectedPerson.getIdNumberPassport());
-            this.whenIssuedPassport.setText(this.selectedPerson.getWhenIssuedPassport());
-            this.whoIssuedPassport.setText(this.selectedPerson.getWhoIssuedPassport());
-        }
     }
 
     private void disableForm(boolean flag) {
@@ -143,34 +142,36 @@ public class EditClientController {
 
     private String formErrorMessage() {
         String message = "";
-        if(this.surname.getText().equals("")) message += "Не указана фамилия!\n";
-        if(this.name.getText().equals("")) message += "Не указано имя!\n";
-        if(this.patronymic.getText().equals("")) message += "Не указано отчество!\n";
-        if(this.seriesPassport.getText().length() != 2) message += "Серия паспорта должна содержать\n2 буквы!\n";
-        if(this.numberPassport.getText().length() != 7) message += "Номер паспорта должен содержать\n7 цифр!\n";
-        if(this.idNumberPassport.getText().length() != 14) message += "Идент. номер должен содержать\n14 символов!\n";
-        if(this.whenIssuedPassport.getText().equals("")) message += "Поле 'Дата выдачи' не заполнено!\n";
-        if(this.whoIssuedPassport.getText().equals("")) message += "Поле 'Кем выдан' не заполнено!";
+        if (this.surname.getText().equals(""))
+            message += "Не указана фамилия!\n";
+        else if (!StringUtils.isAlpha(this.surname.getText()))
+            message += "В полe 'Фамилия' можно\nвводить только буквы!\n";
+        if (this.name.getText().equals(""))
+            message += "Не указано имя!\n";
+        else if (!StringUtils.isAlpha(this.name.getText()))
+            message += "В полe 'Имя' можно\nвводить только буквы!\n";
+        if (this.patronymic.getText().equals(""))
+            message += "Не указано отчество!\n";
+        else if (!StringUtils.isAlpha(this.patronymic.getText()))
+            message += "В полe 'Отчество' можно\nвводить только буквы!\n";
+        if (this.seriesPassport.getText().length() != 2)
+            message += "Серия паспорта должна содержать\n2 буквы!\n";
+        else if (!StringUtils.isAlpha(this.seriesPassport.getText()))
+            message += "В полe 'Серия (пас)' можно\nвводить только буквы!\n";
+        if (this.numberPassport.getText().length() != 7)
+            message += "Номер паспорта должен содержать\n7 цифр!\n";
+        else if (!StringUtils.isNumeric(this.numberPassport.getText()))
+            message += "В полe 'Номер (пас)' можно\nвводить только цифры!\n";
+        if (this.idNumberPassport.getText().length() != 14)
+            message += "Идент. номер должен содержать\n14 символов!\n";
+        else if (!StringUtils.isAlphanumeric(this.idNumberPassport.getText()))
+            message += "В полe 'Идент. номер' можно\nвводить только буквы и цифры!\n";
+        if (this.whenIssuedPassport.getText().equals(""))
+            message += "Поле 'Дата выдачи' не заполнено!\n";
+        if (this.whoIssuedPassport.getText().equals(""))
+            message += "Поле 'Кем выдан' не заполнено!";
+        else if (!StringUtils.isAlphaSpace(this.whoIssuedPassport.getText()))
+            message += "В полe 'Кем выдан' можно\nвводить только буквы!\n";
         return message;
     }
 }
-
-
-
-//ПОТОМ К ПЕЧАТИ
-
-//public RadioButton radioButton1;
-//public RadioButton radioButton2;
-//private ToggleGroup group = new ToggleGroup();
-
-//    if (!flag) this.group.selectToggle(this.radioButton1);
-//    else this.group.selectToggle(null);
-
-//this.radioButton1.setToggleGroup(this.group);
-//this.radioButton2.setToggleGroup(this.group);
-//this.group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-//    if (newValue != null) {
-//        RadioButton selectedButton = (RadioButton) newValue;
-//        System.out.println(selectedButton.getText());
-//    }
-//});

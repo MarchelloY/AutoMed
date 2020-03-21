@@ -44,7 +44,7 @@ public class PersonService {
 
     public static void deletePersonById(String id) throws IOException {
         readPersonsFromFile();
-        if(PERSONS.stream().anyMatch(person -> id.equals(person.getId())))
+        if (PERSONS.stream().anyMatch(person -> id.equals(person.getId())))
             PERSONS.remove(searchPersonById(id));
         writePersonsInFile();
     }

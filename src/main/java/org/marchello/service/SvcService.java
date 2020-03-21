@@ -44,7 +44,7 @@ public class SvcService {
 
     public static void deleteServiceById(String id) throws IOException {
         readServicesFromFile();
-        if(SERVICES.stream().anyMatch(service -> id.equals(service.getId())))
+        if (SERVICES.stream().anyMatch(service -> id.equals(service.getId())))
             SERVICES.remove(searchServiceById(id));
         writeServicesInFile();
     }
@@ -63,7 +63,7 @@ public class SvcService {
         return searchServiceById(id);
     }
 
-    public static List<Svc> searchServicesByFIO(String search) throws FileNotFoundException {
+    public static List<Svc> searchServicesByName(String search) throws FileNotFoundException {
         readServicesFromFile();
         return SERVICES.stream()
                 .filter(service -> (service.getName()).toLowerCase().contains(search.toLowerCase()))
