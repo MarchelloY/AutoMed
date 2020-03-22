@@ -36,9 +36,10 @@ public class EditSvcController {
     @FXML
     public void clickButtonSearch() throws FileNotFoundException {
         List<Svc> searchServices = SvcService.searchServicesByName(this.searchInput.getText());
-        clearForm();
-        if (searchServices.isEmpty())
+        if (searchServices.isEmpty()) {
+            clearForm(true);
             this.errorMessage.setText("Поиск по запросу \"" + this.searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
+        }
         disableForm(true);
         showServiceList(searchServices);
     }
@@ -53,6 +54,8 @@ public class EditSvcController {
     public void clickButtonDelete() throws IOException {
         if(this.selectedService != null) {
             SvcService.deleteServiceById(this.selectedService.getId());
+            clearForm(false);
+            this.errorMessage.setText("Услуга c id " + this.selectedService.getId() + " удалена!");
             clickButtonSearch();
         }
     }
@@ -66,6 +69,8 @@ public class EditSvcController {
             newService.setName(this.name.getText());
             newService.setCost(this.costr.getText() + "," + this.costk.getText());
             SvcService.updateService(newService);
+            clearForm(false);
+            this.errorMessage.setText("Услуга c id " + this.selectedService.getId() + " обновлена!");
             clickButtonSearch();
         }
     }
@@ -92,11 +97,12 @@ public class EditSvcController {
         });
     }
 
-    private void clearForm(){
+    private void clearForm(boolean flag){
         this.name.setText("");
         this.costr.setText("");
         this.costk.setText("");
         this.errorMessage.setText("");
+        if (!flag) this.searchInput.setText("");
     }
 
     private void disableForm(boolean flag) {

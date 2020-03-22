@@ -63,9 +63,16 @@ public class PrintController {
         if (this.personList.getSelectionModel().getSelectedItem() != null)
             selectedPerson = PersonService.getPersonById(this.personList.getSelectionModel().getSelectedItem()
                 .substring(1, this.personList.getSelectionModel().getSelectedItem().indexOf(")")));
-        if (this.selectedButton != null && selectedPerson != null && !selectedServices.isEmpty()) {
+        String message = "";
+        if (!this.selectedButton.isSelected()) message += "Выберите на чье имя нужно\nоформлять документ!\n";
+        if (selectedPerson == null) message += "Выберите пациента!\n";
+        if (selectedServices.isEmpty()) message += "Выберите услуги!\n";
+        this.errorMessage.setText(message);
+        if (message.equals("")) {
             boolean flag = false;
             if (this.selectedButton.getText().equals("Бадыгина Н.A.")) flag = true;
+            clearForm();
+            this.errorMessage.setText("Документ создан!");
             DocService.createDoc(selectedPerson, flag, selectedServices);
         }
     }
@@ -73,7 +80,8 @@ public class PrintController {
     private void showPersonList(List<Person> persons) {
         ObservableList<String> data = FXCollections.observableArrayList();
         for (Person person : persons)
-            data.add("(" + person.getId() + ") " + person.getSurname() + " " + person.getName() + " " + person.getPatronymic());
+            data.add("(" + person.getId() + ") " + person.getSurname() + " " + person.getName()
+                    + " " + person.getPatronymic() + " (" + person.getSeriesPassport() + person.getNumberPassport() + ")");
         this.personList.setItems(data);
     }
 
@@ -83,5 +91,11 @@ public class PrintController {
             data.add("(" + svc.getId() + ") " + svc.getName());
         this.serviceList.setItems(data);
         this.serviceList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
+
+    private void clearForm() {
+        this.group.selectedToggleProperty().get().setSelected(false);
+        this.personList.getSelectionModel().clearSelection();
+        this.serviceList.getSelectionModel().clearSelection();
     }
 }

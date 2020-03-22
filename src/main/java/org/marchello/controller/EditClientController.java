@@ -40,9 +40,10 @@ public class EditClientController {
     @FXML
     public void clickButtonSearch() throws FileNotFoundException {
         List<Person> searchPersons = PersonService.searchPersonsByFIO(this.searchInput.getText());
-        clearForm();
-        if (searchPersons.isEmpty())
+        if (searchPersons.isEmpty()) {
+            clearForm(true);
             this.errorMessage.setText("Поиск по запросу \"" + searchInput.getText() + "\"\nникого не нашел!\nПопробуйте еще раз.");
+        }
         disableForm(true);
         showPersonList(searchPersons);
     }
@@ -57,6 +58,8 @@ public class EditClientController {
     public void clickButtonDelete() throws IOException {
         if (this.selectedPerson != null) {
             PersonService.deletePersonById(this.selectedPerson.getId());
+            clearForm(false);
+            this.errorMessage.setText("Клиент c id " + this.selectedPerson.getId() + " удален!");
             clickButtonSearch();
         }
     }
@@ -78,6 +81,8 @@ public class EditClientController {
             newPerson.setWhenIssuedPassport(this.whenIssuedPassport.getText());
             newPerson.setWhoIssuedPassport(this.whoIssuedPassport.getText());
             PersonService.updatePerson(newPerson);
+            clearForm(false);
+            this.errorMessage.setText("Клиент c id " + this.selectedPerson.getId() + " обновлен!");
             clickButtonSearch();
         }
     }
@@ -111,7 +116,7 @@ public class EditClientController {
         });
     }
 
-    private void clearForm(){
+    private void clearForm(boolean flag){
         this.name.setText("");
         this.surname.setText("");
         this.patronymic.setText("");
@@ -123,6 +128,7 @@ public class EditClientController {
         this.whenIssuedPassport.setText("");
         this.whoIssuedPassport.setText("");
         this.errorMessage.setText("");
+        if (!flag) this.searchInput.setText("");
     }
 
     private void disableForm(boolean flag) {

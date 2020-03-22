@@ -43,7 +43,7 @@ public class AddSvcController {
         this.name.setText("");
         this.costr.setText("");
         this.costk.setText("");
-        this.errorMessage.setText("");
+        this.errorMessage.setText("Форма очищена!");
     }
 
     private String formErrorMessage() {

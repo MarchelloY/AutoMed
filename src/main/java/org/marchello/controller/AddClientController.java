@@ -43,7 +43,7 @@ public class AddClientController {
         this.idNumberPassport.setText("");
         this.whenIssuedPassport.setValue(null);
         this.whoIssuedPassport.setText("");
-        this.errorMessage.setText("");
+        this.errorMessage.setText("Форма очищена!");
     }
 
     @FXML
